@@ -4,4 +4,4 @@
 
 ###A restaurant reservation web application for a randomly named restaurant "Foody-Flavors".
 
-####This project is being developed to learn and practice front-end web development technologies like HTML5, CSS3, JavaScript, jQuery and AngularJS framework.
+####This project has been developed to learn and practice front-end web development technologies like HTML5, CSS3, JavaScript, jQuery and AngularJS framework.
