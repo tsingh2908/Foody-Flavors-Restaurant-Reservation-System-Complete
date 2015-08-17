@@ -1,0 +1,109 @@
+
+/* General Website styles */
+body {
+    padding-top: 50px;
+    font-family: 'Raleway', sans-serif;
+    background-color: #2f4f4f;
+}
+
+.container{
+    font-size: 0.9em;
+}
+
+/* Navbar styles */
+nav a{
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-brand{
+    font-weight: 700;
+}
+
+.navbar-brand span.fa {
+    font-size: 1.4em;
+    margin-right: 4px;
+
+}
+
+.nav-tabs {
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 0 10px #000;
+    font-size: 1.1em;
+    letter-spacing: 1px;
+}
+
+ul.nav-tabs.nav-justified>li {
+    display: table-cell;
+    width: 1%;
+}
+
+ul.nav-tabs.nav-justified>li>a {
+    margin-bottom: 0;
+    border-radius: 4px 4px 0 0;
+}
+
+ul.nav-tabs.nav-justified>.active>a, ul.nav-tabs.nav-justified>.active>a:hover {
+    border-color:#5f9ea0;
+    background-color: #5f9ea0;
+    color: white;
+}
+
+.navbar-link{
+    font-size: 1em;
+    margin-right:16px;
+}
+
+.navbar-link:hover{
+    text-decoration: none;
+}
+
+.btn.save-btn{
+    width:190px;
+}
+
+
+/* Modal styles */
+.modal-content{
+    background-color: #bce8f1;
+}
+
+.modal-title{
+    text-transform: uppercase;
+}
+
+/* Page Content styles */
+#home {
+    max-width: 750px;
+    margin-top: 20px;
+}
+
+.tab-content {
+    background-color: #5f9ea0;
+    padding:10px;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 0 10px #000;
+}
+
+.tab-pane h4{
+    text-transform: uppercase;
+    font-size: 1.2em;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#edit-form {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .tab-content {
+        padding: 20px;
+    }
+    ul.nav-tabs.nav-justified>li {
+        float: none;
+    }
+}

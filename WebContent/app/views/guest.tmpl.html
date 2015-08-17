@@ -1,0 +1,165 @@
+
+  <!-- Modal for 'Confirm Reservation Cancellation' -->
+  <section>
+      <div class="modal fade" id="modalConfirmCancel" tabindex="-1" role="dialog" aria-labelledby="cancelReservation">
+          <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="cancelReservation">Cancel Reservation</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p><strong>Are you sure you want to cancel this reservation ?</strong></p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-warning" data-dismiss="modal">Confirm</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+
+
+	<!-- Page Content for guest user or home page -->
+	<div class="container" id="home">
+
+		<!-- Togglable tabs -->
+		<ul class="nav nav-tabs nav-justified" role = "tablist">
+		    <li role="presentation" class="active"><a data-target ="#tab-make-reservation" data-toggle="tab" role="tab"><strong>Make Reservation</strong></a>
+		    </li>
+		    <li role="presentation"><a data-target ="#tab-change-reservation" data-toggle="tab" role="tab"><strong>Change Reservation</strong></a>
+		    </li>
+		</ul>
+		
+		<!-- Tab Panes -->
+		<div class="tab-content" id="guest-forms">
+		
+		    <!-- "Make Reservation" Tab Pane -->
+		    <div role = "tabpanel" class="tab-pane active" id="tab-make-reservation">
+		
+		        <!-- Make Reservation form -->
+		        <h4>Make a Reservation</h4>
+		        <form role="form" data-ng-submit="gctrl.addRes()">
+		            <div class="row">
+		                <div class="col-xs-12 col-sm-12 col-md-6">
+		                    <div class="form-group">
+		                        <label for="res-Date">Date</label>
+		                        <input type="date" class="form-control" id="res-Date" placeholder="MM/DD/YYYY" data-ng-model="gctrl.newRes.date" value={{gctrl.date}} required>
+		                    </div>
+		                </div>
+		                <div class="col-xs-12 col-sm-12 col-md-6">
+		                    <div class="form-group">
+		                        <label for="res-Time">Time</label>
+		                        <input type="time" class="form-control" id="res-Time" placeholder="HH:MM" data-ng-model="gctrl.newRes.time" required>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="form-group">
+		                <label for="res-Name">Name</label>
+		                <input type="text" class="form-control" id="res-Name" placeholder="Enter Your Name" data-ng-model="gctrl.newRes.customer.name" required>
+		            </div>
+		            <div class="form-group">
+		                <label for="res-Phone">Phone</label>
+		                <input type="tel" class="form-control" id="res-Phone" placeholder="Enter Your Phone No." data-ng-model="gctrl.newRes.customer.phone" required>
+		            </div>
+		            <div class="form-group">
+		                <label for="res-Email">Email</label>
+		                <input type="email" class="form-control" id="res-Email" placeholder="example@domain.com" data-ng-model="gctrl.newRes.customer.email" required>
+		            </div>
+		            <div class="row">
+		                <div class="col-xs-12 col-sm-3">
+		                    <div class="form-group">
+		                        <label for="res-Size">Party Size</label>
+		                        <input type="number" class="form-control" id="res-Size" placeholder="No. of Guests" data-ng-model="gctrl.newRes.partySize" required>
+		                    </div>
+		                </div>
+		                <div class="col-xs-12 col-sm-9">
+		                    <div class="form-group">
+		                        <label for="res-Special">Special Event</label>
+		                        <input type="text" class="form-control" id="res-Special" placeholder="e.g. Birthday, Anniversary etc." data-ng-model="gctrl.newRes.specialEvent">
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="text-center">
+		                <button type="submit" class="btn reserve-btn btn-lg btn-primary">Reserve</button>
+		            </div>
+		        </form>
+		    </div>
+		
+		    <!-- "Change Reservation" Tab Pane -->
+		    <div role = "tabpanel" class="tab-pane" id="tab-change-reservation">
+		
+		        <!-- Change Reservation form -->
+		        <h4>Change Existing Reservation</h4>
+		        <form role="form">
+		            <div class="row">
+		                <div class="col-xs-12 col-sm-12 col-md-6">
+		                    <div class="form-group">
+		                        <label for="res-code">Confirmation code</label>
+		                        <div class="input-group">
+		                            <input type="text" class="form-control" id="res-code" placeholder="Enter Confirmation Code" data-ng-model="gctrl.cnfCode" required>
+		                            <span class="input-group-btn">
+		                                <button type="submit" class="btn btn-primary" data-ng-click = "gctrl.getRes()" data-toggle="tab" data-target="#tab-edit-reservation" aria-expanded="false" aria-controls="form-edit-reservation">Go</button>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </form>
+		
+		            <!-- Edit Reservation form -->
+		            <div class="tab-content" id="edit-form">
+		                <div class="tab-pane" role="tabpanel" id="tab-edit-reservation">
+		                    <h4>Edit Reservation</h4>
+		                    <form role="form">
+		                        <div class="row">
+		                            <div class="col-xs-12 col-sm-12 col-md-6">
+		                                <div class="form-group">
+		                                    <label for="edit-res-Date">Date</label>
+		                                    <input type="date" class="form-control" id="edit-res-Date" placeholder="MM/DD/YYYY" data-ng-model = "gctrl.oldRes.date" required>
+		                                </div>
+		                            </div>
+		                            <div class="col-xs-12 col-sm-12 col-md-6">
+		                                <div class="form-group">
+		                                    <label for="edit-res-Time">Time</label>
+		                                    <input type="time" class="form-control" id="edit-res-Time" placeholder="HH:MM" data-ng-model = "gctrl.oldRes.time" required>
+		                                </div>
+		                            </div>
+		                        </div>
+		                        <div class="form-group">
+		                            <label for="edit-res-Name">Name</label>
+		                            <input type="text" class="form-control" id="edit-res-Name" placeholder="Enter Your Name" data-ng-model = "gctrl.oldRes.customer.name" readonly>
+		                        </div>
+		                        <div class="form-group">
+		                            <label for="edit-res-Phone">Phone</label>
+		                            <input type="tel" class="form-control" id="edit-res-Phone" placeholder="Enter Your Phone No." data-ng-model = "gctrl.oldRes.customer.phone" readonly>
+		                        </div>
+		                        <div class="form-group">
+		                            <label for="edit-res-Email">Email</label>
+		                            <input type="email" class="form-control" id="edit-res-Email" placeholder="example@domain.com" data-ng-model = "gctrl.oldRes.customer.email" readonly>
+		                        </div>
+		                        <div class="row">
+		                            <div class="col-xs-12 col-sm-3">
+		                                <div class="form-group">
+		                                    <label for="edit-res-Size">Party Size</label>
+		                                    <input type="number" class="form-control" id="edit-res-Size" placeholder="No. of Guests" data-ng-model = "gctrl.oldRes.partySize" required>
+		                                </div>
+		                            </div>
+		                            <div class="col-xs-12 col-sm-9">
+		                                <div class="form-group">
+		                                    <label for="edit-res-Special">Special Event</label>
+		                                    <input type="email" class="form-control" id="edit-res-Special" placeholder="e.g. Birthday, Anniversary etc." data-ng-model = "gctrl.oldRes.specialEvent" readonly>
+		                                </div>
+		                            </div>
+		                        </div>
+		                        <div class="text-center">
+		                            <button type="submit" class="btn save-btn btn-lg btn-primary" data-ng-click = "gctrl.updateRes()">Save</button>
+		                            <button type="button" class="btn cancel-btn btn-lg btn-primary" data-toggle="modal" data-target="#modalConfirmCancel">Cancel Reservation</button>
+		                        </div>
+		                    </form>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>

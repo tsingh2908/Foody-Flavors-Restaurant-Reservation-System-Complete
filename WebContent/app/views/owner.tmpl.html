@@ -1,0 +1,484 @@
+	
+	<!-- Fixed-to-Top Navigation Bar -->
+    <nav data-ng-model = "octrl.owner" data-ng-show ="octrl.owner == true" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand (Foody-Flavors, here) and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <!-- Toggle button for sidebar menu -->
+                <button type="button" class="pull-left navbar-toggle menu-toggle-btn collapsed" id="menu-toggle" data-target="#sidebar-wrapper" aria-expanded="false">
+                    <span class="sr-only">Toggle Menu</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">
+                    <span class="fa fa-coffee fa-lg"></span>Foody-Flavors</a>
+                <!-- Toggle button for navigation bar menu items -->
+                <button type="button" class="navbar-toggle toggle-btn collapsed" data-toggle="collapse" data-target="#navbarLinks" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-collapse collapse" id="navbarLinks">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-user"></span>owner@foodyflavors.com
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+	<!-- Modal for 'Confirm Reservation Cancellation' -->
+    <section>
+        <div class="modal fade" id="modalConfirmCancel" tabindex="-1" role="dialog" aria-labelledby="cancelReservation">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="cancelReservation">Cancel Reservation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Are you sure you want to cancel this reservation ?</strong></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning" data-dismiss="modal">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+	
+	<!-- Modal for 'Past Reservations of a Customer' -->
+    <section>
+        <div class="modal fade" id="modalPastReservations" tabindex="-1" role="dialog" aria-labelledby="pastReservations">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="pastReservations">Past Reservations</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>{{octrl.selectedCustomer.name}}</strong></p>
+                        <div class="list-group">
+                            <button class="btn btn-link list-group-item list-group-item-info" data-ng-if = "octrl.pastReservations.length > 0" data-ng-repeat="pastRes in octrl.pastReservations | orderBy: 'cnfCode': reverse" data-ng-click="octrl.action = 'viewReservation'; octrl.getAndViewPastRes($index)" data-toggle="modal" data-target="#modalReservation">
+                                {{pastRes.cnfCode}}
+                            </button>
+                            <a data-ng-if = "!octrl.pastReservations" class="list-group-item list-group-item-info">
+                            	{{octrl.msgNoReservations}}
+                            </a>
+                        </div>
+                        <p data-ng-if = "octrl.pastReservations.length > 0" class="help-block">Click each Reservation Confirmation Code for more details.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-ng-click="octrl.pastReservations = null" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    <!-- Re-usable Modal for Making New Reservation, Viewing Reservation Details, and Editing Existing Reservation -->
+
+    <!-- This modal can be triggered from "Reservations", "Seating Area", and "Customer Contacts" tab panes -->
+
+    <!-- For Making New Reservations: This modal will contain all empty and editable fields and 'Reserve' button, which is handled programmatically using AngularJS -->
+    <!-- For Editing Existing Reservations: This modal will contain all pre-populated & some editable reservation fields and 'Save' & 'Cancel Reservation' buttons, which is handled programmatically using AngularJS -->
+    <!-- For Viewing Existing Reservations: This modal will contain all pre-populated & read-only reservation fields and only 'Close' button, which is handled programmatically using AngularJS-->
+    <section>
+        <div class="modal fade" id="modalReservation" tabindex="-1" role="dialog" aria-labelledby="reservationDetails">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="reservationDetails">Reservation Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="res-Detail-Date">Date</label>
+                                        <input type="date" class="form-control" id="res-Detail-Date" placeholder="MM/DD/YYYY" data-ng-model="octrl.resDetail.date" data-ng-readonly="octrl.action == 'viewReservation'" required>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="form-group">
+                                        <label for="res-Detail-Time">Time</label>
+                                        <input type="time" class="form-control" id="res-Detail-Time" placeholder="HH:MM" data-ng-model="octrl.resDetail.time" data-ng-readonly="octrl.action == 'viewReservation'" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-Detail-Name">Name</label>
+                                <input type="text" class="form-control" id="res-Detail-Name" placeholder="Enter Your Name" data-ng-model="octrl.resDetail.customer.name" data-ng-readonly="octrl.action == 'editReservation' || octrl.action == 'viewReservation'" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-Detail-Phone">Phone</label>
+                                <input type="tel" class="form-control" id="res-Detail-Phone" placeholder="Enter Your Phone No." data-ng-model="octrl.resDetail.customer.phone" data-ng-readonly="octrl.action == 'editReservation' || octrl.action == 'viewReservation'" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-Detail-Email">Email</label>
+                                <input type="email" class="form-control" id="res-Detail-Email" placeholder="example@domain.com" data-ng-model="octrl.resDetail.customer.email" data-ng-readonly="octrl.action == 'editReservation'|| octrl.action == 'viewReservation'" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-3">
+                                    <div class="form-group">
+                                        <label for="res-Detail-Size">Party Size</label>
+                                        <input type="number" class="form-control" id="res-Detail-Size" placeholder="No. of Guests" data-ng-model="octrl.resDetail.partySize" data-ng-readonly="octrl.action == 'viewReservation'" required>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-9">
+                                    <div class="form-group">
+                                        <label for="res-Detail-Special">Special Event</label>
+                                        <input type="text" class="form-control" id="res-Detail-Special" placeholder="e.g. Birthday, Anniversary etc." data-ng-model="octrl.resDetail.specialEvent" data-ng-readonly="octrl.action == 'editReservation'|| octrl.action == 'viewReservation'">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-ng-click="octrl.action=' '" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn reserve-btn btn-primary" data-ng-model = "octrl.action" data-ng-show = "octrl.action == 'editReservation'" data-dismiss="modal" data-ng-click = "octrl.updateRes()">Save</button>
+                        <button type="submit" class="btn reserve-btn btn-primary" data-ng-model = "octrl.action" data-ng-show = "octrl.action == 'makeReservation'" data-dismiss="modal" data-ng-click = "octrl.addRes()">Reserve</button>
+                        <button type="button" class="btn cancel-btn btn-primary" data-ng-model = "octrl.action" data-ng-show = "octrl.action == 'editReservation'" data-toggle="modal" data-target="#modalConfirmCancel">Cancel Reservation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+    <!-- Modal for 'Restaurant Seating Map' (layout of tables): To be used for assigning a table or changing an assigned table for a reservation -->
+    <section>
+        <div class="modal fade" id="modalSeatingMap" tabindex="-1" role="dialog" aria-labelledby="restaurantSeatingMap">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="restaurantSeatingMap">Restaurant Seating Map</h4>
+                    </div>
+                    <div class="modal-body" data-ng-init=>
+                        <div id="seatingMap" class="container">
+                            <div class="row">
+                                <div data-ng-repeat="table in octrl.tables" class="col-md-4">
+                                    <div class="seats seat-occupied img-circle" data-ng-if="table.status == 'Occupied'">
+                                        <p>Table # {{table.tableId}}</p>
+                                        <p>{{table.status}}</p>
+                                        <p>Size: {{table.size}}</p>
+                                        <p>{{table.cnfCode}}</p>
+                                    </div>
+                                    <div class="seats seat-available img-rounded" data-ng-if="table.status == 'Available'">
+                                        <p>Table # {{table.tableId}}</p>
+                                        <p>{{table.status}}</p>
+                                        <p>Size: {{table.size}}</p>
+                                    </div>
+                                    <p class="radio disabled text-center" data-ng-if="table.status == 'Occupied'">
+                                        <label>
+                                            <input type="radio" disabled>
+                                            Select
+                                        </label>
+                                    </p>
+                                    <p class="radio text-center" data-ng-if="table.status == 'Available'">
+                                        <label>
+                                            <input type="radio" data-ng-model = "octrl.selectedTable" data-ng-value = "table">
+                                            Select
+                                        </label>
+                                    </p>
+                                </div> 
+                            </div>
+                       	</div>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-ng-click="octrl.selectedReservation = null" data-dismiss="modal">Close</button>
+                         <button type="submit" class="btn assign-btn btn-primary" data-ng-click="octrl.assignTable()">Assign</button>
+                    </div>
+               	</div>
+            </div>
+        </div>
+	</section>
+    
+    
+    <!-- Page Content for Owner landing page -->
+    <div id="wrapper" class = "container">
+	<!-- Sidebar Menu; togglable on smaller screen sizes -->
+	<div class="row tabbable">
+	    <div id="sidebar-wrapper" role="navigation">
+	        <!--Togglable tabs-->
+	        <ul class="nav nav-tabs nav-stacked sidebar-nav" role="tablist">
+	            <li role="presentation" class = "active">
+	                <a href="" data-target="#tab-reservation" data-ng-click = "octrl.getAllRes()" data-toggle="tab" role="tab">
+	                    <span class="glyphicon glyphicon-calendar"></span>Reservations
+	                </a>
+	            </li>
+	            <li role="presentation">
+	                <a href="" data-target="#tab-seating" data-ng-click = "octrl.getAllTables()" data-toggle="tab" role="tab">
+	                    <span class="glyphicon glyphicon-th"></span>Seating Area
+	                </a>
+	            </li>
+	            <li>
+	                <a href="" data-target="#tab-profile" data-ng-click = "octrl.getProfile()"data-toggle="tab" role="tab">
+	                    <span class="fa fa-building fa"></span>Restaurant Profile
+	                </a>
+	            </li>
+	            <li>
+	                <a href="" data-target="#tab-settings" data-ng-click = "octrl.getAllTimings()" data-toggle="tab" role="tab">
+	                    <span class="glyphicon glyphicon-cog"></span>Settings
+	                </a>
+	            </li>
+	            <li>
+	                <a href="" data-target="#tab-contacts" data-ng-click = "octrl.getAllCust()" data-toggle="tab" role="tab">
+	                    <span class="fa fa-group"></span>Customer Contacts
+	                </a>
+	            </li>
+	        </ul>
+	    </div> <!-- /#sidebar-wrapper -->
+	
+	    <!-- Tab Panes -->
+	    <div id="page-content-wrapper" class="tab-content">
+	
+	        <!--'Reservations' Tab Pane -->
+	        <div role = "tabpanel" class="tab-pane fade in active" id="tab-reservation">
+	            <h4 class="ownerPageHeadings">Reservations</h4>
+	            <div class="container-fluid">
+	                <div class="input-group">
+	                    <input type="text" class="form-control" data-ng-model="octrl.searchReservation" placeholder="Search Reservation" id="res-Search">
+	                    <div class="input-group-btn">
+	                        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span>
+	                        </button>
+	                    </div>
+	                </div>
+	                <div class="row">
+	                    <div class="col-xs-12 col-sm-12 col-md-6 ">
+	                        <button class="btn make-res-btn navbar-left btn-primary" data-ng-click = "octrl.resDetail = null; octrl.action = 'makeReservation'" data-toggle="modal" data-target="#modalReservation" title="Make Reservation">
+	                            <span class="fa fa-plus-square"></span>
+	                            <span>Make Reservation</span>
+	                        </button>
+	                    </div>
+	                </div>
+	
+	                <!-- List of Reservations displayed in tabular form -->
+	                <table class="table table-condensed table-bordered table-striped">
+	                    <thead>
+	                     <tr>
+	                         <th>CNF Code</th>
+	                         <th>Reserved By</th>
+	                         <th>Reserved Date</th>
+	                         <th>#Guests</th>
+	                         <th>Action</th>
+	                     </tr>
+	                    </thead>
+	                    <tbody>
+	                     <tr data-ng-repeat = "res in octrl.reservations | orderBy:'cnfCode': true | filter: octrl.searchReservation">
+	                         <td>{{res.cnfCode}}</td>
+	                         <td>{{res.customer.name}}</td>
+	                         <td>{{res.date | date:'MM/dd/yyyy'}} {{res.time | date:'h:mm a'}}</td>
+	                         <td>{{res.partySize}}</td>
+	                         <td class="info">
+	                             <button class="btn btn-sm btn-primary" data-ng-click="octrl.action = 'viewReservation'; octrl.viewResDetails($index)" data-toggle="modal" data-target="#modalReservation" title="More Details">
+	                                 <span class="glyphicon glyphicon-share"></span>
+	                                 <span class="btn-text">More Details</span>
+	                             </button>
+	                             <button class="btn btn-sm btn-primary" data-ng-click="octrl.action = 'editReservation'; octrl.viewResDetails($index)" data-toggle="modal" data-target="#modalReservation" title="Edit">
+	                                 <span class="glyphicon glyphicon-edit"></span>
+	                                 <span class="btn-text">Edit</span>
+	                             </button>
+	                             <button class="btn btn-sm assign-table-btn btn-primary" data-ng-click="octrl.getAllTables(); octrl.selectedReservation = res; octrl.getReservedTable();" data-toggle="modal" data-target="#modalSeatingMap" title="Assign Table">
+	                                 <span class="fa fa-table"></span>
+	                                 <span class="btn-text">Assign Table</span>
+	                             </button>
+	                         </td>
+	                     </tr>
+	                   </tbody>
+	                </table>
+	            </div>
+	        </div>
+	
+	        <!-- 'Seating Area' Tab Pane -->
+	        <div role = "tabpanel" class="tab-pane fade" id="tab-seating">
+	            <h4 class="ownerPageHeadings">Seating Area</h4>
+	            <div class="container-fluid">
+	                <div class="input-group">
+	                    <input type="text" class="form-control" data-ng-model="octrl.searchTable" placeholder="Search Table" id="table-Search">
+	                    <div class="input-group-btn">
+	                        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span>
+	                        </button>
+	                    </div>
+	                </div>
+	
+	                <!-- List of Tables (Seating Area) displayed in tabular form-->
+	                <table class="table table-condensed table-bordered table-striped">
+	                    <thead>
+	                     <tr>
+	                         <th>Table#</th>
+	                         <th>Size</th>
+	                         <th>Status</th>
+	                         <th>Since</th>
+	                         <th>CNF Code</th>
+	                     </tr>
+	                    </thead>
+	                    <tbody>
+	                     <tr data-ng-repeat = "table in octrl.tables | orderBy:'tableId': false | filter: octrl.searchTable">
+	                         <td>{{table.tableId}}</td>
+	                         <td>{{table.size}}</td>
+	                         <td>{{table.status}}</td>
+	                         <td data-ng-if = "table.status == 'Available'">-</td>
+	                         <td data-ng-if = "table.status == 'Occupied'">{{table.since | date:'h:mm a'}}</td>
+	                         <td data-ng-if = "table.status == 'Occupied'" class="info text-left">
+	                             <button type="button" class="btn btn-link" data-ng-click = "octrl.action = 'viewReservation'; octrl.getAndViewRes($index)" data-toggle="modal" data-target="#modalReservation" title="Reservation Details">{{table.cnfCode}}</button>
+	                         </td>
+	                         <td data-ng-if = "table.status == 'Available'" class="info">-</td>
+	                     </tr>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	
+	        <!-- 'Restaurant Profile' Tab Pane -->
+	        <div role = "tabpanel" class="tab-pane fade" id="tab-profile">
+	            <h4 class="ownerPageHeadings">Restaurant Profile</h4>
+	            <div class="container-fluid">
+	                <form role="form">
+	                    <div class="form-group">
+	                        <label for="restaurant-Name">Name</label>
+	                        <input type="text" class="form-control" id="restaurant-Name" placeholder="Enter Restaurant Name" data-ng-model = "octrl.profile.name">
+	                    </div>
+	                    <div class="form-group">
+	                        <label for="restaurant-Phone">Phone</label>
+	                        <input type="tel" class="form-control" id="restaurant-Phone" placeholder="Enter Restaurant Phone No." data-ng-model = "octrl.profile.phone">
+	                    </div>
+	                    <div class="form-group">
+	                        <label for="restaurant-Email">Email</label>
+	                        <input type="email" class="form-control" id="restaurant-Email" placeholder="example@domain.com" data-ng-model = "octrl.profile.email">
+	                    </div>
+	                    <div class="form-group">
+	                        <label for="restaurant-Address">Address</label>
+	                        <textarea rows="2" cols="20" wrap="hard" class="form-control" id="restaurant-Address" placeholder="Enter Restaurant Address" data-ng-model = "octrl.profile.address"></textarea>
+	                    </div>
+	                    <div class="text-center">
+	                        <button type="submit" class="btn saveChanges-btn btn-lg btn-primary" data-ng-click="octrl.updateProfile()">Save Changes</button>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+	
+	        <!-- 'Settings' Tab Pane -->
+	        <div role = "tabpanel" class="tab-pane fade" id="tab-settings">
+	            <h4 class="ownerPageHeadings">Settings</h4>
+	            <div class="container-fluid">
+	                <div class="panel panel-primary">
+	                    <div class="panel-heading">
+	                        <h4 class="panel-title"><small>Auto Assign Table</small></h4>
+	                    </div>
+	                    <div class="panel-body">
+	                        <input data-size="mini" type="checkbox" name="autoAssignCheckbox" checked>
+	                    </div>
+	                </div>
+	
+	                <div class="panel panel-primary">
+	                    <div class="panel-heading">
+	                        <h4 class="panel-title"><small>Choose Restaurant Open Days and Hours</small></h4>
+	                    </div>
+	                    <form role="form" id="operationSettingsForm">
+	                        <table class="table table-condensed table-bordered table-striped">
+	                            <thead>
+	                             <tr>
+	                                 <th>Day</th>
+	                                 <th>From</th>
+	                                 <th>To</th>
+	                             </tr>
+	                            </thead>
+	                            <tbody>
+	                             <tr data-ng-repeat="t in octrl.timings | orderBy:'dayId':false ">
+	                                 <td>
+	                                     <label for="day">
+	                                     <input type="checkbox" name="day">
+	                                     {{t.day}}
+	                                     </label>
+	                                 </td>
+	                                 <td>
+	                                 	<label for="from-time">
+	                            			<input type="time" name="from-time" data-ng-model="t.fromTime">
+	                      				</label>
+	                                 </td>
+	                                 <td>
+	                                 	<label for="to-time">
+	                            			<input type="time" name="to-time" data-ng-model="t.toTime">
+	                      				</label>
+	                                 </td>
+	                             </tr>
+	                            </tbody>
+	                        </table>
+	                        <div class="btn-container-div text-center">
+	                            <button type="submit" class="btn saveChanges-btn btn-primary">Save Changes</button>
+	                        </div>
+	                    </form>
+	                </div>
+	            </div>
+	        </div>
+	
+	        <!-- 'Customer Contacts' Tab Pane -->
+	        <div role = "tabpanel" class="tab-pane fade" id="tab-contacts">
+	            <h4 class="ownerPageHeadings">Customer Contacts</h4>
+	            <div class="container-fluid">
+	                <div class="input-group">
+	                    <input type="text" class="form-control" data-ng-model="octrl.searchCustomer" placeholder="Search Customer" id="customer-Search">
+	                    <div class="input-group-btn">
+	                        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span>
+	                        </button>
+	                    </div>
+	                </div>
+	
+	                <!-- List of Customer Contacts displayed in tabular form -->
+	                <table class="table table-condensed table-bordered table-striped">
+	                    <thead>
+	                     <tr>
+	                         <th>Name</th>
+	                         <th>Phone</th>
+	                         <th>Email</th>
+	                         <th>Action</th>
+	                     </tr>
+	                    </thead>
+	                    <tbody>
+	                     <tr data-ng-repeat = "cust in octrl.customers | orderBy:'name': false | filter: octrl.searchCustomer">
+	                         <td>{{cust.name}}</td>
+	                         <td>{{cust.phone}}</td>
+	                         <td>{{cust.email}}</td>
+	                         <td class="info">
+	                             <button class="btn btn-sm btn-primary" data-ng-click = "octrl.selectedCustomer = cust; octrl.getPastReservations()" data-toggle="modal" data-target="#modalPastReservations" title="Past Reservations">
+	                                 <span class="glyphicon glyphicon-calendar"></span>
+	                                 <span class="btn-text">Past Reservations</span>
+	                             </button>
+	                         </td>
+	                     </tr>
+	                    </tbody>
+	                </table>
+	            </div>
+	        </div>
+	    </div> <!-- /#page-content-wrapper -->
+	</div> <!--/.row -->
+	</div><!-- /#wrapper -->
+	
+	<!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+	 <!-- Script to Initialize Bootstrap Switch -->
+    <script>
+        $("[name='autoAssignCheckbox']").bootstrapSwitch();
+    </script>
